@@ -1,8 +1,13 @@
 const express = require('express');
-const mongoose = require('mongoose'); // Importer mongoose correctement
-const dotenv = require('dotenv'); // Pour charger les variables d'environnement
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 const app = express();
 const PORT = 3001; 
+
+const Client = mongoose.model('Client', new mongoose.Schema({
+  name: String,
+  email: String
+}));
 
 dotenv.config();
 
@@ -15,15 +20,18 @@ const connectMongoDB = async () => {
     console.error('MongoDB connection error:', e); // Afficher l'erreur complète
   }
 };
-
 // Appel de la fonction de connexion
 connectMongoDB();
 
 app.use(express.json());
 
-// Exemple d'une route pour obtenir un client
-app.get('/clients', (req, res) => {
-    res.send([{ id: 1, name: "Client A" }, { id: 2, name: "Client B" }]);
+app.get('/getAll', async (req, res) => {
+  try {
+      const clients = await Client.find();
+      res.json(clients);
+  } catch (error) {
+      res.status(500).send({ message: 'Error retrieving clients', error });
+  }
 });
 
 // Route pour tester la connexion MongoDB
