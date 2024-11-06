@@ -16,7 +16,7 @@ mongoose.connect('mongodb+srv://bastien:Romeo2020@cluster0.87ozbqt.mongodb.net/C
 const cuisineRoutes = require('./routes'); // Assurez-vous que `./routes/index.js` existe et exporte un routeur valide
 app.use('/cuisine', cuisineRoutes); // Utilise le routeur correctement
 
-const port = process.env.PORT || 3003;
+const port = 3003;
 app.listen(port, () => {
     console.log(`Cuisine service running on port ${port}`);
 });

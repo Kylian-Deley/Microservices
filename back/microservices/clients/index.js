@@ -16,7 +16,7 @@ mongoose.connect('mongodb+srv://bastien:Romeo2020@cluster0.87ozbqt.mongodb.net/C
 const clientRoutes = require('./routes');
 app.use('/clients', clientRoutes);
 
-const port = process.env.PORT || 3001; // Chaque microservice a son propre port
+const port = 3001; // Chaque microservice a son propre port
 app.listen(port, () => {
     console.log(`Clients service running on port ${port}`);
 });

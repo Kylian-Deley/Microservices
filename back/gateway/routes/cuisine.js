@@ -4,7 +4,7 @@ const roleMiddleware = require('../middleware/roleMiddleware');
 const router = express.Router();
 
 // Rôles autorisés pour ajouter des plats
-const rolesForAddingPlats = ['admin', 'chef'];
+const rolesForAddingPlats = ['chef'];
 
 // Appliquer le middleware de rôle pour toutes les requêtes sauf GET /plats
 router.use((req, res, next) => {

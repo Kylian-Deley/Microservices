@@ -16,7 +16,7 @@ mongoose.connect('mongodb+srv://bastien:Romeo2020@cluster0.87ozbqt.mongodb.net/C
 const commandesRoutes = require('./routes');
 app.use('/commandes', commandesRoutes);
 
-const port = process.env.PORT || 3004;
+const port = 3004;
 app.listen(port, () => {
     console.log(`Commandes service running on port ${port}`);
 });
