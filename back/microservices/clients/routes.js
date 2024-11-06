@@ -2,7 +2,6 @@ const express = require('express');
 const Plat = require('../cuisine/models/Plat');
 const router = express.Router();
 
-// Route pour mettre à jour le nom du menu d'un cuisinier
 router.post('/menu/name', async (req, res) => {
     const { menuName } = req.body;
     const chefId = req.headers['user-id'];
@@ -10,7 +9,6 @@ router.post('/menu/name', async (req, res) => {
     if (!chefId) return res.status(403).json({ message: "ID du cuisinier non fourni" });
 
     try {
-        // Met à jour le nom du menu pour tous les plats du cuisinier
         await Plat.updateMany({ chefId }, { menuName });
         res.status(200).json({ message: "Nom du menu mis à jour avec succès" });
     } catch (error) {
@@ -18,7 +16,6 @@ router.post('/menu/name', async (req, res) => {
     }
 });
 
-// Route pour ajouter un plat (réservée aux cuisiniers)
 router.post('/plats', async (req, res) => {
     const chefId = req.headers['user-id'];
     if (!chefId) return res.status(403).json({ message: "ID du cuisinier non fourni" });
@@ -35,7 +32,6 @@ router.post('/plats', async (req, res) => {
     }
 });
 
-// Route pour récupérer tous les plats d'un cuisinier
 router.get('/plats', async (req, res) => {
     const chefId = req.headers['user-id'];
     if (!chefId) return res.status(403).json({ message: "ID du cuisinier non fourni" });

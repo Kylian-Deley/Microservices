@@ -1,4 +1,3 @@
-// models/Plat.js
 const mongoose = require('mongoose');
 
 const PlatSchema = new mongoose.Schema({
