@@ -1,14 +1,7 @@
 <template>
   <div class="bg-cover min-h-screen" style="background-image: url('https://www.le-coursier.fr/storage/images//aofStJKnS3wiMN7sMQQPvD4ZelWOZTCA3mkpmQL4.jpg');">
     <!-- Navbar fixe avec lien vers les commandes livrées -->
-    <nav class="bg-gradient-to-r from-indigo-700 to-purple-600 bg-opacity-90 backdrop-blur-md fixed w-full p-5 text-white shadow-lg z-50">
-      <div class="max-w-6xl mx-auto flex justify-between items-center">
-        <a href="/livraison" class="text-3xl font-bold tracking-wide text-gray-100 hover:text-yellow-400 transition">🚚 Livraison</a>
-        <div class="space-x-6 flex items-center">
-          <router-link to="/livrees" class="hover:text-yellow-400 text-lg font-medium transition">Commandes Livrées</router-link>
-        </div>
-      </div>
-    </nav>
+      <NavBarLivreur />
 
     <!-- Espacement pour éviter le chevauchement avec la navbar -->
     <div class="pt-28"></div>
@@ -47,8 +40,10 @@
 
 <script>
 import axios from 'axios';
+import NavBarLivreur from "@/components/NavBar/NavbarLivreur.vue";
 
 export default {
+    components: {NavBarLivreur},
   data() {
     return {
       commandes: []

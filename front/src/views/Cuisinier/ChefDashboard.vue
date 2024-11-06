@@ -1,15 +1,7 @@
 <template>
   <div class="bg-cover min-h-screen" style="background-image: url('https://www.tourisme-rennes.com/voy_content/uploads/2023/09/Hotel-Balthazar-restaurant.jpg'); background-attachment: fixed; background-position: center;">
     <!-- Navbar stylisée pour le cuisinier -->
-    <nav class="bg-gradient-to-r from-teal-800 to-green-700 bg-opacity-90 backdrop-blur-md fixed w-full p-5 text-white shadow-lg z-50">
-      <div class="max-w-6xl mx-auto flex justify-between items-center">
-        <a href="/cuisine" class="text-3xl font-bold tracking-wide text-gray-100 hover:text-yellow-400 transition">🍽️ Restaurant</a>
-        <div class="space-x-6 flex items-center">
-          <router-link to="/mes-plats" class="hover:text-yellow-400 text-lg font-medium transition">Tous mes Plats</router-link>
-          <router-link to="/mes-commandes-cuisinier" class="hover:text-yellow-400 text-lg font-medium transition">Mes Commandes</router-link>
-        </div>
-      </div>
-    </nav>
+      <NavBarCuisine />
 
     <!-- Espace vide sous la navbar pour éviter le chevauchement -->
     <div class="pt-28"></div>
@@ -73,8 +65,10 @@
 
 <script>
 import axios from 'axios';
+import NavBarCuisine from "@/components/NavBar/NavbarCuisine.vue";
 
 export default {
+    components: {NavBarCuisine},
   data() {
     return {
       newMenuName: '', // Nom du nouveau menu à créer
