@@ -1,4 +1,3 @@
-// models/Menu.js
 const mongoose = require('mongoose');
 
 const MenuSchema = new mongoose.Schema({

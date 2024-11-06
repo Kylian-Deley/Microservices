@@ -3,7 +3,7 @@ const axios = require('axios');
 const roleMiddleware = require('../middleware/roleMiddleware');
 const router = express.Router();
 
-const roles = ['client']; // Rôles pour le service client
+const roles = ['client'];
 
 router.use(roleMiddleware(roles));
 

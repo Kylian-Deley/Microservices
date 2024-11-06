@@ -24,7 +24,7 @@ app.use('/api/commandes', commandesRoutes);
 app.use('/api/cuisine', cuisineRoutes);
 app.use('/api', authRoutes);
 
-const port = process.env.PORT || 3000;
+const port = 3000;
 app.listen(port, () => {
     console.log(`Gateway running on port ${port}`);
 });
