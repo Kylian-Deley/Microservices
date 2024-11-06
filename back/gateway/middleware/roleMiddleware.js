@@ -1,6 +1,9 @@
+const User = require("../models/User");
+
 module.exports = (allowedRoles) => {
-    return (req, res, next) => {
-        const userRole = req.headers['role'];
+    return async(req, res, next) => {
+        const user = await User.findById(req.headers['user-id']);
+        userRole = user.roles
         if (!userRole) {
             return res.status(401).json({ message: 'Rôle non fourni' });
         }
