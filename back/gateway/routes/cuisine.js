@@ -20,7 +20,6 @@ router.all('*', async (req, res) => {
             url: `http://localhost:3003/cuisine${req.path}`,
             data: req.body,
             headers: {
-                role: req.headers['role'],
                 'user-id': req.headers['user-id']
             },
         });

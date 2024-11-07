@@ -3,9 +3,9 @@
             class="flex min-h-screen items-center justify-center bg-cover bg-center"
             style="background: url(https://images.pexels.com/photos/2062426/pexels-photo-2062426.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2) center center/cover no-repeat;"
     >
-        <div class="bg-white bg-opacity-70 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-md">
+        <div class="bg-white bg-opacity-70 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-xl">
             <div class="text-center">
-                <h2 class="text-3xl font-extrabold text-gray-800 mb-6">Bienvenue!</h2>
+                <h2 class="text-3xl font-extrabold text-gray-800 mb-6">🍽️ Bienvenue sur Salt Bae!</h2>
                 <p class="text-sm text-gray-600 mb-4">Connectez-vous pour continuer</p>
             </div>
             <form @submit.prevent="login" class="space-y-6">
