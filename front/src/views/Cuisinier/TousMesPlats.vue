@@ -11,7 +11,7 @@
       <h1 class="text-4xl font-bold text-center mb-12 text-white bg-gray-700 bg-opacity-80 rounded-lg py-4">Mes Menus et Plats</h1>
 
       <!-- Liste des menus -->
-      <div v-for="menu in menus" :key="menu._id" class="mb-8">
+      <div v-for="menu in cuisineStore.menus" :key="menu._id" class="mb-8">
         <div class="p-6 bg-gray-700 bg-opacity-90 rounded-lg shadow-md hover:shadow-xl transition-shadow">
           <div class="flex justify-between items-center">
             <h2 class="font-bold text-2xl text-yellow-400">{{ menu.name }}</h2>
@@ -74,141 +74,116 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { useCuisineStore } from '../../httpRequest/stores/cuisine.js';
 import ModalComponentChef from "@/components/ModalComponentChef.vue";
 import ConfirmModalChef from "@/components/ConfirmModalChef.vue";
 import NavBarCuisine from "@/components/NavBar/NavbarCuisine.vue";
+import { onMounted, ref } from 'vue';
 
 export default {
-  components: {NavBarCuisine, ModalComponentChef, ConfirmModalChef },
-  data() {
+  components: { NavBarCuisine, ModalComponentChef, ConfirmModalChef },
+
+  setup() {
+    const cuisineStore = useCuisineStore();
+    const showEditMenuModal = ref(false);
+    const showEditPlatModal = ref(false);
+    const showDeleteMenuModal = ref(false);
+    const showDeletePlatModal = ref(false);
+    const editMenu = ref({});
+    const editPlat = ref({});
+    const deleteMenuId = ref(null);
+    const deletePlatId = ref(null);
+
+    onMounted(() => {
+      cuisineStore.fetchMenus();
+    });
+
+    const openEditMenuModal = (menu) => {
+      editMenu.value = { ...menu };
+      showEditMenuModal.value = true;
+    };
+
+    const closeEditMenuModal = () => {
+      showEditMenuModal.value = false;
+      editMenu.value = {};
+    };
+
+    const openEditPlatModal = (plat) => {
+      editPlat.value = { ...plat };
+      showEditPlatModal.value = true;
+    };
+
+    const closeEditPlatModal = () => {
+      showEditPlatModal.value = false;
+      editPlat.value = {};
+    };
+
+    const mettreAJourMenu = async (updatedMenu) => {
+      await cuisineStore.updateMenu(updatedMenu);
+      closeEditMenuModal();
+    };
+
+    const mettreAJourPlat = async (updatedPlat) => {
+      await cuisineStore.updatePlat(updatedPlat);
+      closeEditPlatModal();
+    };
+
+    const openDeleteMenuModal = (menuId) => {
+      deleteMenuId.value = menuId;
+      showDeleteMenuModal.value = true;
+    };
+
+    const closeDeleteMenuModal = () => {
+      showDeleteMenuModal.value = false;
+      deleteMenuId.value = null;
+    };
+
+    const openDeletePlatModal = (platId) => {
+      deletePlatId.value = platId;
+      showDeletePlatModal.value = true;
+    };
+
+    const closeDeletePlatModal = () => {
+      showDeletePlatModal.value = false;
+      deletePlatId.value = null;
+    };
+
+    const confirmDeleteMenu = async () => {
+      await cuisineStore.deleteMenu(deleteMenuId.value);
+      closeDeleteMenuModal();
+    };
+
+    const confirmDeletePlat = async () => {
+      await cuisineStore.deletePlat(deletePlatId.value);
+      closeDeletePlatModal();
+    };
+
     return {
-      menus: [],
-      showEditMenuModal: false,
-      showEditPlatModal: false,
-      showDeleteMenuModal: false,
-      showDeletePlatModal: false,
-      editMenu: {},
-      editPlat: {},
-      deleteMenuId: null,
-      deletePlatId: null
+      cuisineStore,
+      showEditMenuModal,
+      showEditPlatModal,
+      showDeleteMenuModal,
+      showDeletePlatModal,
+      editMenu,
+      editPlat,
+      openEditMenuModal,
+      closeEditMenuModal,
+      openEditPlatModal,
+      closeEditPlatModal,
+      mettreAJourMenu,
+      mettreAJourPlat,
+      openDeleteMenuModal,
+      closeDeleteMenuModal,
+      openDeletePlatModal,
+      closeDeletePlatModal,
+      confirmDeleteMenu,
+      confirmDeletePlat,
     };
   },
-  async mounted() {
-    await this.fetchMenus();
-  },
-  methods: {
-    async fetchMenus() {
-      const clientInfo = JSON.parse(localStorage.getItem('clientInfo'));
-      try {
-        const response = await axios.get('http://localhost:3000/api/cuisine/menus', {
-          headers: {'user-id': clientInfo.id, 'role': clientInfo.role}
-        });
-        this.menus = response.data;
-      } catch (error) {
-        console.error('Erreur lors de la récupération des menus:', error);
-      }
-    },
-    openEditMenuModal(menu) {
-      this.editMenu = {...menu};
-      this.showEditMenuModal = true;
-    },
-    closeEditMenuModal() {
-      this.showEditMenuModal = false;
-      this.editMenu = {};
-    },
-    openEditPlatModal(plat) {
-      this.editPlat = {...plat};
-      this.showEditPlatModal = true;
-    },
-    closeEditPlatModal() {
-      this.showEditPlatModal = false;
-      this.editPlat = {};
-    },
-    async mettreAJourMenu(updatedMenu) {
-      const clientInfo = JSON.parse(localStorage.getItem('clientInfo'));
-      try {
-        await axios.put(
-            `http://localhost:3000/api/cuisine/menus/${updatedMenu._id}`,
-            updatedMenu,
-            {
-              headers: { 'user-id': clientInfo.id }
-            }
-        );
-        await this.fetchMenus();
-        this.closeEditMenuModal();
-      } catch (error) {
-        console.error('Erreur lors de la mise à jour du menu:', error);
-      }
-    },
-    async mettreAJourPlat(updatedPlat) {
-      const clientInfo = JSON.parse(localStorage.getItem('clientInfo'));
-      try {
-        await axios.put(
-            `http://localhost:3000/api/cuisine/plats/${updatedPlat._id}`,
-            updatedPlat,
-            {
-              headers: { 'user-id': clientInfo.id }
-            }
-        );
-        await this.fetchMenus();
-        this.closeEditPlatModal();
-      } catch (error) {
-        console.error('Erreur lors de la mise à jour du plat:', error);
-      }
-    },
-    openDeleteMenuModal(menuId) {
-      this.deleteMenuId = menuId;
-      this.showDeleteMenuModal = true;
-    },
-    closeDeleteMenuModal() {
-      this.showDeleteMenuModal = false;
-      this.deleteMenuId = null;
-    },
-    openDeletePlatModal(platId) {
-      this.deletePlatId = platId;
-      this.showDeletePlatModal = true;
-    },
-    closeDeletePlatModal() {
-      this.showDeletePlatModal = false;
-      this.deletePlatId = null;
-    },
-    async confirmDeleteMenu() {
-      const clientInfo = JSON.parse(localStorage.getItem('clientInfo'));
-      try {
-        await axios.delete(
-            `http://localhost:3000/api/cuisine/menus/${this.deleteMenuId}`,
-            {
-              headers: { 'user-id': clientInfo.id }
-            }
-        );
-        await this.fetchMenus();
-        this.closeDeleteMenuModal();
-      } catch (error) {
-        console.error('Erreur lors de la suppression du menu:', error);
-      }
-    },
-    async confirmDeletePlat() {
-      const clientInfo = JSON.parse(localStorage.getItem('clientInfo'));
-      try {
-        await axios.delete(
-            `http://localhost:3000/api/cuisine/plats/${this.deletePlatId}`,
-            {
-              headers: { 'user-id': clientInfo.id }
-            }
-        );
-        await this.fetchMenus();
-        this.closeDeletePlatModal();
-      } catch (error) {
-        console.error('Erreur lors de la suppression du plat:', error);
-      }
-    }
-  }
 };
 </script>
 
 <style scoped>
-/* Styles pour un affichage élégant */
 .bg-cover {
   background-size: cover;
   background-position: center;

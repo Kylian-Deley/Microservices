@@ -8,7 +8,7 @@
       <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Commandes Livrées</h1>
 
       <!-- Liste des commandes livrées -->
-      <div v-for="commande in commandesLivrees" :key="commande._id" class="p-4 bg-white rounded-lg shadow-lg mb-6">
+      <div v-for="commande in cuisineStore.commandesLivrees" :key="commande._id" class="p-4 bg-white rounded-lg shadow-lg mb-6">
         <div class="flex justify-between">
           <div>
             <h2 class="font-bold text-lg text-gray-700">Commande ID : {{ commande._id }}</h2>
@@ -29,38 +29,23 @@
 </template>
 
 <script>
-import axios from 'axios';
 import NavBarLivreur from "@/components/NavBar/NavbarLivreur.vue";
+import { onMounted } from 'vue';
+import { useCommandesStore } from '../../httpRequest/stores/commande';
 
 export default {
-    components: {NavBarLivreur},
-  data() {
+  components: { NavBarLivreur },
+
+  setup() {
+    const cuisineStore = useCommandesStore();
+
+    onMounted(() => {
+      cuisineStore.fetchCommandesLivrees();
+    });
+
     return {
-      commandesLivrees: []
+      cuisineStore,
     };
   },
-  async mounted() {
-    await this.fetchCommandesLivrees();
-  },
-  methods: {
-    async fetchCommandesLivrees() {
-      try {
-        // Récupération du rôle et ID du livreur depuis localStorage (ou une autre source si nécessaire)
-        const livreurInfo = JSON.parse(localStorage.getItem('clientInfo'));
-
-        // Appel API avec headers pour inclure le rôle et l'ID du livreur
-        const response = await axios.get(`http://localhost:3000/api/commandes/livreur/${livreurInfo.id}/delivered`, {
-          headers: {
-            'role': livreurInfo.role,
-            'user-id': livreurInfo.id // ou l'ID pertinent pour le livreur
-          }
-        });
-        this.commandesLivrees = response.data;
-      } catch (error) {
-        console.error('Erreur lors de la récupération des commandes livrées :', error);
-      }
-    }
-  }
 };
-
 </script>

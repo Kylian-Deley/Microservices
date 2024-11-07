@@ -22,7 +22,7 @@ router.post('/login', async (req, res) => {
 
         const userRole = user.roles;
 
-        const userInfo = { id: user._id, role: userRole };
+        const userInfo = { id: user._id, roles: userRole };
 
         if (userRole === 'client') {
             res.json({ redirectUrl: '/menu', userInfo });

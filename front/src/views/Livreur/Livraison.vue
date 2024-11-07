@@ -1,7 +1,7 @@
 <template>
   <div class="bg-cover min-h-screen" style="background-image: url('https://www.le-coursier.fr/storage/images//aofStJKnS3wiMN7sMQQPvD4ZelWOZTCA3mkpmQL4.jpg');">
     <!-- Navbar fixe avec lien vers les commandes livrées -->
-      <NavBarLivreur />
+    <NavBarLivreur />
 
     <!-- Espacement pour éviter le chevauchement avec la navbar -->
     <div class="pt-28"></div>
@@ -11,7 +11,7 @@
       <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Commandes prêtes à être livrées</h1>
 
       <!-- Liste des commandes terminées mais non livrées -->
-      <div v-for="commande in commandes" :key="commande._id" class="p-4 bg-white rounded-lg shadow-lg mb-6">
+      <div v-for="commande in cuisineStore.commandesALivrer" :key="commande._id" class="p-4 bg-white rounded-lg shadow-lg mb-6">
         <div class="flex justify-between">
           <div>
             <h2 class="font-bold text-lg text-gray-700">Commande ID : {{ commande._id }}</h2>
@@ -39,57 +39,30 @@
 </template>
 
 <script>
-import axios from 'axios';
 import NavBarLivreur from "@/components/NavBar/NavbarLivreur.vue";
+import { onMounted } from 'vue';
+import { useCommandesStore } from '../../httpRequest/stores/commande';
 
 export default {
-    components: {NavBarLivreur},
-  data() {
+  components: { NavBarLivreur },
+
+  setup() {
+    const cuisineStore = useCommandesStore();
+
+    onMounted(() => {
+      cuisineStore.fetchCommandesALivrer();
+    });
+
+    const updateDeliveryStatus = (commandeId, status) => {
+      cuisineStore.updateDeliveryStatus(commandeId, status);
+    };
+
     return {
-      commandes: []
+      cuisineStore,
+      updateDeliveryStatus,
     };
   },
-  async mounted() {
-    await this.fetchCommandesALivrer();
-  },
-  methods: {
-    async fetchCommandesALivrer() {
-      const livreurInfo = JSON.parse(localStorage.getItem('clientInfo'));
-      try {
-        const response = await axios.get('http://localhost:3000/api/commandes/completed', {
-          headers: {
-            'user-id': livreurInfo.id,
-            'role': livreurInfo.role
-          }
-        });
-        this.commandes = response.data.filter(commande => commande.deliveryStatus !== 'delivered');
-      } catch (error) {
-        console.error('Erreur lors de la récupération des commandes :', error);
-      }
-    },
-    async updateDeliveryStatus(commandeId, status) {
-      const livreurInfo = JSON.parse(localStorage.getItem('clientInfo'));
-      try {
-        await axios.patch(`http://localhost:3000/api/commandes/${commandeId}/delivery-status`,
-            { deliveryStatus: status, livreurId: livreurInfo.id }, // Envoyer l'ID du livreur dans le corps de la requête
-            {
-              headers: {
-                'user-id': livreurInfo.id,
-                'role': livreurInfo.role
-              }
-            }
-        );
-        console.log('Statut de livraison mis à jour avec succès');
-        if (status === 'delivered') {
-          this.fetchCommandesALivrer();
-        }
-      } catch (error) {
-        console.error("Erreur lors de la mise à jour du statut de livraison :", error);
-      }
-    }
-  }
 };
-
 </script>
 
 <style scoped>
