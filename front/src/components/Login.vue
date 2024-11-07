@@ -64,8 +64,10 @@ export default {
     },
     methods: {
         async login() {
+          console.log("Email:", this.email);
+          console.log("Password:", this.password);
             const authStore = useAuthStore()
-            authStore.login({email: this.email, password: this.password})
+            await authStore.login({email: this.email, password: this.password})
         },
     },
 };

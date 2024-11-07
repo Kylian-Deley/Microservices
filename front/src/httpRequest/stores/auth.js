@@ -24,7 +24,7 @@ export const useAuthStore = defineStore('auth', {
         this.userId = response.data.userInfo.id;
         this.roles = response.data.userInfo.roles;
         this.isAuthenticated = true;
-        router.push(response.data.redirectUrl)
+        await router.push(response.data.redirectUrl)
         const clientInfo = {
             userId: this.userId,
             roles: this.roles,
