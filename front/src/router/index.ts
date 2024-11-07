@@ -8,6 +8,10 @@ import TousMesPlats from "@/views/Cuisinier/TousMesPlats.vue";
 import Livraison from "@/views/Livreur/Livraison.vue";
 import CommandeLivrer from "@/views/Livreur/CommandeLivrer.vue";
 import UnauthorizedPage from '../views/UnauthorizedPage.vue';
+import Profil from "@/views/Client/Profil.vue"
+import ProfilLivreur from "@/views/Livreur/ProfilLivreur.vue";
+import {useAuthStore} from "../httpRequest/stores/auth.js"
+
 
 const routes = [
   {
@@ -19,6 +23,12 @@ const routes = [
     path: '/menu',
     name: 'Menu',
     component: MenuPage,
+    meta: { requiresRole: 'client' },
+  },
+  {
+    path: '/profil',
+    name: 'Profil',
+    component: Profil,
     meta: { requiresRole: 'client' },
   },
   {
@@ -52,6 +62,12 @@ const routes = [
     meta: { requiresRole: 'livreur' },
   },
   {
+    path: '/profil-livreur',
+    name: 'profilLivreur',
+    component: ProfilLivreur,
+    meta: { requiresRole: 'livreur' },
+  },
+  {
     path: '/livrees',
     name: 'livrees',
     component: CommandeLivrer,
@@ -75,7 +91,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if(to.meta ){
-    const userRole = JSON.parse(localStorage.getItem('clientInfo')!)?.role;
+    const authStore = useAuthStore()
+    // console.log(authStore)
+    const userRole = authStore.roles;
 
     if (to.meta.requiresRole && to.meta.requiresRole !== userRole) {
       return next({ path: '/permission_denied' });

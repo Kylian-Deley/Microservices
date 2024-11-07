@@ -51,6 +51,8 @@
 
 <script>
 import axios from 'axios';
+import {useAuthStore} from '../httpRequest/stores/auth.js'
+
 
 export default {
     data() {
@@ -62,24 +64,8 @@ export default {
     },
     methods: {
         async login() {
-            try {
-                const response = await axios.post('http://localhost:3000/api/login', {
-                    email: this.email,
-                    password: this.password,
-                });
-
-                const { redirectUrl, userInfo } = response.data;
-
-                if (userInfo) {
-                    localStorage.setItem('clientInfo', JSON.stringify(userInfo));
-                } else {
-                    console.error('userInfo is undefined');
-                }
-
-                this.$router.push(redirectUrl);
-            } catch (error) {
-                this.errorMessage = 'Email ou mot de passe incorrect.';
-            }
+            const authStore = useAuthStore()
+            authStore.login({email: this.email, password: this.password})
         },
     },
 };

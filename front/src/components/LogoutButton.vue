@@ -3,7 +3,7 @@
       @click="handleLogout"
       class="flex items-center px-4 py-2 bg-red-500 text-white font-semibold rounded-md shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
     >
-      <i class="fas fa-sign-out-alt mr-2"></i> <!-- Icône de déconnexion -->
+      <i class="pi pi-sign-out mr-2"></i> <!-- Icône de déconnexion -->
       Déconnexion
     </button>
   </template>
