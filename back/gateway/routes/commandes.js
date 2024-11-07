@@ -14,7 +14,6 @@ router.all('*', async (req, res) => {
             url: `http://localhost:3004/commandes${req.path}`,
             data: req.body,
             headers: {
-                role: req.headers['role'],
                 'user-id': req.headers['user-id']
             },
         });

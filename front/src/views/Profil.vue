@@ -30,25 +30,29 @@
                 required
             />
           </div>
-          <div class="mb-4 relative">
-            <label for="password" class="block font-semibold text-gray-600">Mot de passe</label>
+          <div class="mb-4">
+            <label for="newPassword" class="block font-semibold text-gray-600">Nouveau mot de passe</label>
             <input
-                :type="showPassword ? 'text' : 'password'"
-                id="password"
-                v-model="userData.password"
-                class="w-full border border-gray-300 rounded p-2 mt-1 text-gray-600 pr-10"
-                placeholder="Mot de passe"
+                type="password"
+                id="newPassword"
+                v-model="userData.newPassword"
+                class="w-full border border-gray-300 rounded p-2 mt-1 text-gray-600"
+                placeholder="Nouveau mot de passe"
+                required
             />
-            <button
-                style="height: 100px"
-                type="button"
-                @click="togglePasswordVisibility"
-                class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-600 hover:text-gray-800"
-            >
-              <span v-if="showPassword">👁️</span>
-              <span v-else>🙈</span>
-            </button>
           </div>
+          <div class="mb-4">
+            <label for="confirmPassword" class="block font-semibold text-gray-600">Confirmer le mot de passe</label>
+            <input
+                type="password"
+                id="confirmPassword"
+                v-model="userData.confirmPassword"
+                class="w-full border border-gray-300 rounded p-2 mt-1 text-gray-600"
+                placeholder="Confirmer le mot de passe"
+                required
+            />
+          </div>
+          <div v-if="errorMessage" class="text-red-500 font-semibold mb-4">{{ errorMessage }}</div>
           <button
               type="submit"
               class="bg-gradient-to-r from-gray-600 to-gray-500 hover:from-gray-700 hover:to-gray-600 text-white px-4 py-2 rounded shadow-md"
@@ -72,16 +76,6 @@
             Oui
           </button>
         </div>
-      </div>
-    </div>
-
-    <div v-if="showConfirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full">
-        <h2 class="text-xl font-bold text-gray-600 mb-4">Confirmation</h2>
-        <p class="mb-4 text-gray-600">Votre profil a été mis à jour avec succès.</p>
-        <button @click="closeConfirmationModal" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-          OK
-        </button>
       </div>
     </div>
   </div>
@@ -117,9 +111,9 @@ export default {
       email: '',
       password: ''
     });
+    const errorMessage = ref('');
     const showPassword = ref(false);
     const showUpdateConfirmationModal = ref(false);
-    const showConfirmationModal = ref(false);
 
     const togglePasswordVisibility = () => {
       showPassword.value = !showPassword.value;
@@ -146,22 +140,44 @@ export default {
     const updateProfile = async () => {
       try {
         const authStore = useAuthStore();
-        await axios.put(`${props.apiEndpoint}/${authStore.userId}`, userData.value, {
+
+        // Réinitialiser le message d'erreur
+        errorMessage.value = '';
+
+        // Préparer les données à envoyer
+        const userDataToSend = {
+          ...userData.value,
+        };
+
+        // Si un nouveau mot de passe est saisi, mettez-le à jour
+        if (userData.value.newPassword && userData.value.newPassword === userData.value.confirmPassword) {
+          userDataToSend.password = userData.value.newPassword; // Ajoutez le nouveau mot de passe
+        } else if (userData.value.newPassword !== userData.value.confirmPassword) {
+          errorMessage.value = 'Les mots de passe ne correspondent pas';
+          return;
+        }
+
+        // Supprimez les champs temporaires avant d'envoyer
+        delete userDataToSend.newPassword;
+        delete userDataToSend.confirmPassword;
+
+        // Envoyez la requête PUT
+        await axios.put(`${props.apiEndpoint}/${authStore.userId}`, userDataToSend, {
           headers: {
             'user-id': authStore.userId
           }
         });
+
         showUpdateConfirmationModal.value = false;
-        showConfirmationModal.value = true;
       } catch (error) {
         console.error('Erreur lors de la mise à jour du profil:', error);
-        alert('Erreur lors de la mise à jour du profil');
+        errorMessage.value = 'Erreur lors de la mise à jour du profil';
       }
     };
 
     const closeConfirmationModal = () => {
       fetchUserData();
-      showConfirmationModal.value = false;
+      showUpdateConfirmationModal.value = false;
     };
 
     const cancelUpdate = () => {
@@ -174,7 +190,6 @@ export default {
       userData,
       showPassword,
       showUpdateConfirmationModal,
-      showConfirmationModal,
       togglePasswordVisibility,
       confirmUpdate,
       updateProfile,
