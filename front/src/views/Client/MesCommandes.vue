@@ -11,7 +11,16 @@
       <div v-for="commande in commandes" :key="commande._id" class="mb-8 bg-white bg-opacity-90 rounded-xl shadow-md overflow-hidden">
         <div class="bg-gradient-to-r from-gray-600 to-gray-500 text-white p-4 flex justify-between items-center">
           <h2 class="text-xl font-semibold">Commande du {{ new Date(commande.date).toLocaleDateString() }}</h2>
-          <p class="text-sm font-semibold bg-green-500 rounded-full px-3 py-1">{{ commande.status }}</p>
+          <p
+              class="text-sm font-semibold rounded-full px-3 py-1"
+              :class="{
+              'bg-yellow-500': commande.status === 'pending',
+              'bg-blue-500': commande.status === 'in progress',
+              'bg-green-500': commande.status === 'completed'
+          }">
+            {{ commande.status }}
+          </p>
+
         </div>
 
         <div class="bg-gray-50 p-6 space-y-4">
@@ -33,9 +42,10 @@
 <script>
 import axios from 'axios';
 import NavbarClient from "@/components/NavBar/NavbarClient.vue";
+import { useAuthStore } from "@/httpRequest/stores/auth.js";
 
 export default {
-  components: {NavbarClient},
+  components: { NavbarClient },
   data() {
     return {
       commandes: []
@@ -43,20 +53,21 @@ export default {
   },
   async mounted() {
     try {
-      const clientInfo = JSON.parse(localStorage.getItem('clientInfo'));
-      if (!clientInfo || !clientInfo.id || !clientInfo.role) {
-        throw new Error("Les informations du client sont manquantes dans localStorage.");
-      }
+      const authStore = useAuthStore();
+      const userId = authStore.userId;
 
       // Appel de l'API avec l'ID du client dans l'URL
-      const response = await axios.get(`http://localhost:3000/api/commandes/client/${clientInfo.id}`, {
+      const response = await axios.get(`http://localhost:3000/api/commandes/client/${userId}`, {
         headers: {
-          'user-id': clientInfo.id,
-          'role': clientInfo.role
+          'user-id': userId
         }
       });
 
-      this.commandes = response.data;
+      // Récupération et tri des commandes par statut
+      this.commandes = response.data.sort((a, b) => {
+        const statusOrder = { 'pending': 1, 'in progress': 2, 'completed': 3 };
+        return statusOrder[a.status] - statusOrder[b.status];
+      });
     } catch (error) {
       console.error('Erreur lors de la récupération des commandes:', error);
     }

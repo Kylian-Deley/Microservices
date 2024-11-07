@@ -1,20 +1,20 @@
 # Compte Client
 
-email: "bo@linkpart.com"
+email: "client@gmail.com"
 password: "azerty"
 roles: "client"
-name: "baba"
+name: "Client"
 
 # Compte Cuisine
 
-email: "bob@linkpart.com"
+email: "chef@gmail.com"
 password: "azerty"
 roles: "chef"
-name: "baba chef"
+name: "Chef"
 
 # Compte Livreur
 
-email: "baba@linkpart.com"
+email: "livreur@gmail.com"
 password: "azerty"
 roles: "livreur"
-name: "baba livreur"
+name: "Livreur"
