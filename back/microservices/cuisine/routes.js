@@ -1,6 +1,7 @@
 const express = require('express');
 const Plat = require('./models/Plat');
 const Menu = require('./models/Menu');
+const User = require('../../gateway/models/User');
 const router = express.Router();
 
 router.post('/menus', async (req, res) => {
@@ -147,6 +148,41 @@ router.delete('/plats/:id', async (req, res) => {
         await Menu.findByIdAndUpdate(plat.menuId, { $pull: { plats: plat._id } });
 
         res.status(200).json({ message: "Plat supprimé avec succès" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Récupérer les informations du profil
+router.get('/profil/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ message: 'Utilisateur non trouvé' });
+        }
+        res.json({ name: user.name, email: user.email, password: user.password });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Mettre à jour les informations du profil
+router.put('/profil/:id', async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ message: 'Utilisateur non trouvé' });
+        }
+
+        user.name = name || user.name;
+        user.email = email || user.email;
+        if (password) {
+            user.password = password;
+        }
+
+        await user.save();
+        res.json({ message: 'Profil mis à jour avec succès' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

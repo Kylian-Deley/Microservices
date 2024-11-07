@@ -3,6 +3,9 @@
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <a href="/cuisine" class="text-3xl font-bold tracking-wide text-gray-100 hover:text-yellow-400 transition">🍽️ Salt Bae</a>
             <div class="space-x-6 flex items-center">
+              <router-link to="/profil-cuisinier" class="hover:text-yellow-400 text-lg font-medium transition">
+                Profil
+              </router-link>
                 <router-link to="/mes-plats" class="hover:text-yellow-400 text-lg font-medium transition">Tous mes Plats</router-link>
                 <router-link to="/mes-commandes-cuisinier" class="hover:text-yellow-400 text-lg font-medium transition">Mes Commandes</router-link>
                 <logout-button></logout-button>

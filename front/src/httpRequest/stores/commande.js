@@ -70,7 +70,6 @@ export const useCommandesStore = defineStore('commandes', {
     async fetchCommandesLivrees() {
       this.loading = true;
       const userId = useAuthStore().userId;
-      console.log(userId)
       try {
         const response = await httpModel.get(`/commandes/livreur/${userId}/delivered`
         );
