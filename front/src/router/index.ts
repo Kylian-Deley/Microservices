@@ -8,9 +8,12 @@ import TousMesPlats from "@/views/Cuisinier/TousMesPlats.vue";
 import Livraison from "@/views/Livreur/Livraison.vue";
 import CommandeLivrer from "@/views/Livreur/CommandeLivrer.vue";
 import UnauthorizedPage from '../views/UnauthorizedPage.vue';
-import Profil from "@/views/Client/Profil.vue"
-import ProfilLivreur from "@/views/Livreur/ProfilLivreur.vue";
+import Profil from "@/views/Client/ClientProfile.vue"
+import ProfilLivreur from "@/views/Livreur/LivreurProfile.vue";
 import {useAuthStore} from "../httpRequest/stores/auth.js"
+import ClientProfile from "@/views/Client/ClientProfile.vue";
+import LivreurProfile from "@/views/Livreur/LivreurProfile.vue";
+import CuisinierProfile from "@/views/Cuisinier/CuisinierProfile.vue";
 
 
 const routes = [
@@ -26,9 +29,9 @@ const routes = [
     meta: { requiresRole: 'client' },
   },
   {
-    path: '/profil',
-    name: 'Profil',
-    component: Profil,
+    path: '/profil-client',
+    name: 'ClientProfile',
+    component: ClientProfile,
     meta: { requiresRole: 'client' },
   },
   {
@@ -41,6 +44,12 @@ const routes = [
     path: '/cuisine',
     name: 'ChefDashboard',
     component: ChefDashboard,
+    meta: { requiresRole: 'chef' },
+  },
+  {
+    path: '/profil-cuisinier',
+    name: 'CuisinierProfile',
+    component: CuisinierProfile,
     meta: { requiresRole: 'chef' },
   },
   {
@@ -63,8 +72,8 @@ const routes = [
   },
   {
     path: '/profil-livreur',
-    name: 'profilLivreur',
-    component: ProfilLivreur,
+    name: 'LivreurProfile',
+    component: LivreurProfile,
     meta: { requiresRole: 'livreur' },
   },
   {
@@ -92,7 +101,6 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   if(to.meta ){
     const authStore = useAuthStore()
-    // console.log(authStore)
     const userRole = authStore.roles;
 
     if (to.meta.requiresRole && to.meta.requiresRole !== userRole) {

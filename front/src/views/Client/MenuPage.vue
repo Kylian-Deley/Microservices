@@ -66,6 +66,7 @@
 <script>
 import axios from 'axios';
 import NavbarClient from "@/components/NavBar/NavbarClient.vue";
+import {useAuthStore} from "@/httpRequest/stores/auth.js";
 
 export default {
   components: { NavbarClient },
@@ -79,7 +80,7 @@ export default {
   },
   async mounted() {
     try {
-      const response = await axios.get('http://localhost:3003/cuisine/menus-public'); // Appel de la route publique
+      const response = await axios.get('http://localhost:3003/cuisine/menus-public');
       this.menus = response.data;
 
       // Initialise la quantité de chaque plat
@@ -111,18 +112,15 @@ export default {
       }));
 
       try {
-        const clientInfo = JSON.parse(localStorage.getItem('clientInfo'));
-        if (!clientInfo || !clientInfo.id || !clientInfo.role) {
-          throw new Error("Les informations du client sont manquantes dans localStorage.");
-        }
+        const authStore = useAuthStore();
+        const userId = authStore.userId;
 
         await axios.post('http://localhost:3000/api/commandes', {
-          clientId: clientInfo.id,
+          clientId: userId,
           plats: commandeDetails,
         }, {
           headers: {
-            'user-id': clientInfo.id,
-            'role': clientInfo.role,
+            'user-id': userId
           },
         });
 
