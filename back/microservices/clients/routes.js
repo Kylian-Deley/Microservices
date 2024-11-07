@@ -1,6 +1,4 @@
 const express = require('express');
-const Plat = require('../cuisine/models/Plat');
-const axios = require('axios');
 const User = require('../../gateway/models/User');
 const router = express.Router();
 
@@ -11,7 +9,7 @@ router.get('/profil/:id', async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'Utilisateur non trouvé' });
         }
-        res.json({ name: user.name, email: user.email });
+        res.json({ name: user.name, email: user.email, password: user.password });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -26,11 +24,10 @@ router.put('/profil/:id', async (req, res) => {
             return res.status(404).json({ message: 'Utilisateur non trouvé' });
         }
 
-        // Mettre à jour les informations
         user.name = name || user.name;
         user.email = email || user.email;
         if (password) {
-            user.password = password; // Le hook "pre-save" de Mongoose va hasher le mot de passe
+            user.password = password;
         }
 
         await user.save();

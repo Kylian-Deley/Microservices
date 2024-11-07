@@ -1,11 +1,11 @@
 <template>
   <div class="bg-cover min-h-screen" style="background-image: url('https://img.freepik.com/photos-gratuite/planches-bois-restaurant-flou-fond_1253-56.jpg');">
     <!-- Navbar stylisée et fixe -->
-    <NavbarClient />
+    <NavBarLivreur />
 
     <!-- Contenu principal du profil avec style -->
     <div class="max-w-5xl mx-auto pt-28 px-6 pb-12">
-      <h1 class="text-4xl font-bold text-center mb-8 text-gray-800 bg-white bg-opacity-70 rounded-lg py-2">Mon Profil</h1>
+      <h1 class="text-4xl font-bold text-center mb-8 text-gray-800 bg-white bg-opacity-70 rounded-lg py-2">Mon Profil Livreur</h1>
 
       <!-- Formulaire de mise à jour du profil stylisé -->
       <div class="bg-white bg-opacity-90 rounded-xl shadow-md p-6">
@@ -91,11 +91,11 @@
 <script>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import NavbarClient from "@/components/NavBar/NavbarClient.vue";
-import {useAuthStore} from "@/httpRequest/stores/auth.js";
+import NavBarLivreur from "@/components/NavBar/NavbarLivreur.vue";
+import { useAuthStore } from "@/httpRequest/stores/auth.js";
 
 export default {
-  components: { NavbarClient },
+  components: { NavBarLivreur },
   setup() {
     const userData = ref({
       name: '',
@@ -113,8 +113,7 @@ export default {
     const fetchUserData = async () => {
       try {
         const authStore = useAuthStore();
-        console.log(authStore)
-        const response = await axios.get(`http://localhost:3000/api/clients/profil/${authStore.userId}`, {
+        const response = await axios.get(`http://localhost:3000/api/livraison/profil/${authStore.userId}`, {
           headers: {
             'user-id': authStore.userId
           }
@@ -133,7 +132,7 @@ export default {
       try {
         const authStore = useAuthStore();
 
-        await axios.put(`http://localhost:3000/api/clients/profil/${authStore.userId}`, userData.value, {
+        await axios.put(`http://localhost:3000/api/livraison/profil/${authStore.userId}`, userData.value, {
           headers: {
             'user-id': authStore.userId
           }
