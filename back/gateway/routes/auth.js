@@ -1,5 +1,4 @@
 const express = require('express');
-const axios = require('axios');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const router = express.Router();
@@ -14,11 +13,10 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ message: 'Utilisateur non trouvé' });
         }
 
-        // Vérification du mot de passe
-        //const isPasswordValid = await bcrypt.compare(password, user.password);
-        //if (!isPasswordValid) {
-       //     return res.status(401).json({ message: 'Mot de passe incorrect' });
-       // }
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: 'Mot de passe incorrect' });
+        }
 
         const userRole = user.roles;
 
