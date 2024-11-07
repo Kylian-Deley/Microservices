@@ -1,7 +1,7 @@
 <template>
   <div class="bg-cover min-h-screen" style="background-image: url('https://img.freepik.com/photos-gratuite/planches-bois-restaurant-flou-fond_1253-56.jpg');">
     <!-- Navbar stylisée et fixe -->
-    <NavBar />
+    <NavbarClient />
 
     <!-- Contenu principal des commandes avec style -->
     <div class="max-w-5xl mx-auto pt-28 px-6 pb-12">
@@ -32,10 +32,10 @@
 
 <script>
 import axios from 'axios';
-import NavBar from "@/views/NavbarClient.vue";
+import NavbarClient from "@/components/NavBar/NavbarClient.vue";
 
 export default {
-  components: {NavBar},
+  components: {NavbarClient},
   data() {
     return {
       commandes: []

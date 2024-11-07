@@ -16,7 +16,7 @@
           <div class="flex justify-between items-center">
             <h2 class="font-bold text-2xl text-yellow-400">{{ menu.name }}</h2>
             <div>
-              <button @click="openEditMenuModal(menu)" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">Modifier</button>
+              <button @click="openEditMenuModal(menu)" class="bg-blue-500 text-white px-4 mr-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">Modifier</button>
               <button @click="openDeleteMenuModal(menu._id)" class="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition">Supprimer</button>
             </div>
           </div>
@@ -30,7 +30,7 @@
                 </div>
                 <div class="text-right">
                   <p class="text-lg font-semibold text-white">{{ plat.price }} €</p>
-                  <button @click="openEditPlatModal(plat)" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">Modifier</button>
+                  <button @click="openEditPlatModal(plat)" class="bg-blue-500 text-white px-4 py-2 mr-4 rounded-lg shadow hover:bg-blue-600 transition">Modifier</button>
                   <button @click="openDeletePlatModal(plat._id)" class="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition">Supprimer</button>
                 </div>
               </div>
@@ -126,18 +126,32 @@ export default {
       this.editPlat = {};
     },
     async mettreAJourMenu(updatedMenu) {
+      const clientInfo = JSON.parse(localStorage.getItem('clientInfo'));
       try {
-        await axios.put(`http://localhost:3000/api/cuisine/menus/${updatedMenu._id}`, updatedMenu);
-        this.fetchMenus();
+        await axios.put(
+            `http://localhost:3000/api/cuisine/menus/${updatedMenu._id}`,
+            updatedMenu,
+            {
+              headers: { 'user-id': clientInfo.id }
+            }
+        );
+        await this.fetchMenus();
         this.closeEditMenuModal();
       } catch (error) {
         console.error('Erreur lors de la mise à jour du menu:', error);
       }
     },
     async mettreAJourPlat(updatedPlat) {
+      const clientInfo = JSON.parse(localStorage.getItem('clientInfo'));
       try {
-        await axios.put(`http://localhost:3000/api/cuisine/plats/${updatedPlat._id}`, updatedPlat);
-        this.fetchMenus();
+        await axios.put(
+            `http://localhost:3000/api/cuisine/plats/${updatedPlat._id}`,
+            updatedPlat,
+            {
+              headers: { 'user-id': clientInfo.id }
+            }
+        );
+        await this.fetchMenus();
         this.closeEditPlatModal();
       } catch (error) {
         console.error('Erreur lors de la mise à jour du plat:', error);
@@ -160,18 +174,30 @@ export default {
       this.deletePlatId = null;
     },
     async confirmDeleteMenu() {
+      const clientInfo = JSON.parse(localStorage.getItem('clientInfo'));
       try {
-        await axios.delete(`http://localhost:3000/api/cuisine/menus/${this.deleteMenuId}`);
-        this.fetchMenus();
+        await axios.delete(
+            `http://localhost:3000/api/cuisine/menus/${this.deleteMenuId}`,
+            {
+              headers: { 'user-id': clientInfo.id }
+            }
+        );
+        await this.fetchMenus();
         this.closeDeleteMenuModal();
       } catch (error) {
         console.error('Erreur lors de la suppression du menu:', error);
       }
     },
     async confirmDeletePlat() {
+      const clientInfo = JSON.parse(localStorage.getItem('clientInfo'));
       try {
-        await axios.delete(`http://localhost:3000/api/cuisine/plats/${this.deletePlatId}`);
-        this.fetchMenus();
+        await axios.delete(
+            `http://localhost:3000/api/cuisine/plats/${this.deletePlatId}`,
+            {
+              headers: { 'user-id': clientInfo.id }
+            }
+        );
+        await this.fetchMenus();
         this.closeDeletePlatModal();
       } catch (error) {
         console.error('Erreur lors de la suppression du plat:', error);
