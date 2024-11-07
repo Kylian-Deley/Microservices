@@ -17,11 +17,13 @@ const clientsRoutes = require('./routes/clients');
 const commandesRoutes = require('./routes/commandes');
 const cuisineRoutes = require('./routes/cuisine');
 const authRoutes = require('./routes/auth');
+const livraisonRoutes = require('./routes/livraison');
 
 // Définition des routes
 app.use('/api/clients', clientsRoutes);
 app.use('/api/commandes', commandesRoutes);
 app.use('/api/cuisine', cuisineRoutes);
+app.use('/api/livraison', livraisonRoutes);
 app.use('/api', authRoutes);
 
 const port = 3000;

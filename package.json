@@ -2,11 +2,12 @@
   "name": "my-microservices-app",
   "version": "1.0.0",
   "scripts": {
-    "start": "concurrently \"npm run start:gateway\" \"npm run start:service1\" \"npm run start:service2\" \"npm run start:service3\" \"npm run start:front\"",
+    "start": "concurrently \"npm run start:gateway\" \"npm run start:service1\" \"npm run start:service2\" \"npm run start:service3\"  \"npm run start:service4\" \"npm run start:front\"",
     "start:gateway": "node back/gateway/index.js",
     "start:service1": "node back/microservices/clients/index.js",
     "start:service2": "node back/microservices/commandes/index.js",
     "start:service3": "node back/microservices/cuisine/index.js",
+    "start:service4": "node back/microservices/livraison/index.js",
     "start:front": "npm run --prefix front dev"
   },
   "devDependencies": {

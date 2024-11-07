@@ -9,6 +9,7 @@ import Livraison from "@/views/Livreur/Livraison.vue";
 import CommandeLivrer from "@/views/Livreur/CommandeLivrer.vue";
 import UnauthorizedPage from '../views/UnauthorizedPage.vue';
 import Profil from "@/views/Client/Profil.vue"
+import ProfilLivreur from "@/views/Livreur/ProfilLivreur.vue";
 import {useAuthStore} from "../httpRequest/stores/auth.js"
 
 
@@ -58,6 +59,12 @@ const routes = [
     path: '/livraison',
     name: 'livraison',
     component: Livraison,
+    meta: { requiresRole: 'livreur' },
+  },
+  {
+    path: '/profil-livreur',
+    name: 'profilLivreur',
+    component: ProfilLivreur,
     meta: { requiresRole: 'livreur' },
   },
   {
