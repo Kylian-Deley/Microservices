@@ -5,13 +5,16 @@
             <div class="space-x-6 flex items-center">
                 <router-link to="/mes-plats" class="hover:text-yellow-400 text-lg font-medium transition">Tous mes Plats</router-link>
                 <router-link to="/mes-commandes-cuisinier" class="hover:text-yellow-400 text-lg font-medium transition">Mes Commandes</router-link>
+                <logout-button></logout-button>
             </div>
         </div>
     </nav>
 </template>
 
 <script>
+import LogoutButton from '../LogoutButton.vue';
 export default {
+  components: { LogoutButton },
   name: "NavBarCuisine",
 };
 </script>

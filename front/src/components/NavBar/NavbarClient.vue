@@ -5,11 +5,14 @@
       <span>Voir mes commandes</span>
       <i class="fas fa-shopping-cart"></i>
     </router-link>
+    <logout-button></logout-button>
   </nav>
 </template>
 
 <script>
+import LogoutButton from '../LogoutButton.vue';
 export default {
+  components: { LogoutButton },
   name: "NavBar",
 };
 </script>

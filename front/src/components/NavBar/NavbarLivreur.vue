@@ -5,12 +5,15 @@
             <div class="space-x-6 flex items-center">
                 <router-link to="/livrees" class="hover:text-yellow-400 text-lg font-medium transition">Commandes Livrées</router-link>
             </div>
+            <logout-button></logout-button>
         </div>
     </nav>
 </template>
 
 <script>
+import LogoutButton from '../LogoutButton.vue';
 export default {
+  components: { LogoutButton },
   name: "NavBarLivreur",
 };
 </script>
