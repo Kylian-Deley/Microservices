@@ -8,6 +8,7 @@ import TousMesPlats from "@/views/Cuisinier/TousMesPlats.vue";
 import Livraison from "@/views/Livreur/Livraison.vue";
 import CommandeLivrer from "@/views/Livreur/CommandeLivrer.vue";
 import UnauthorizedPage from '../views/UnauthorizedPage.vue';
+import Profil from "@/views/Client/Profil.vue"
 
 const routes = [
   {
@@ -19,6 +20,12 @@ const routes = [
     path: '/menu',
     name: 'Menu',
     component: MenuPage,
+    meta: { requiresRole: 'client' },
+  },
+  {
+    path: '/profil',
+    name: 'Profil',
+    component: Profil,
     meta: { requiresRole: 'client' },
   },
   {

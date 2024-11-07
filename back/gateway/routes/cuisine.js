@@ -15,17 +15,11 @@ router.use((req, res, next) => {
 
 router.all('*', async (req, res) => {
     try {
-        const userId = req.headers['user-id'];
-        const role = req.headers['role'];
-
         const response = await axios({
             method: req.method,
             url: `http://localhost:3003/cuisine${req.path}`,
             data: req.body,
-            headers: {
-                role: role,
-                'user-id': userId
-            },
+            headers: { role: req.headers['role'] },
         });
         res.json(response.data);
     } catch (error) {
