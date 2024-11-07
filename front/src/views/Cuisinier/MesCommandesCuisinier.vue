@@ -29,7 +29,7 @@
             </div>
 
             <!-- Liste des commandes -->
-            <ul class="space-y-8">
+            <ul class="space-y-8" v-if="filteredCommandes.length">
                 <li v-for="commande in filteredCommandes" :key="commande._id" class="p-6 bg-gray-700 bg-opacity-90 rounded-lg shadow-md">
                     <div class="flex justify-between items-center">
                         <div>
@@ -37,11 +37,16 @@
                         <p class="text-gray-300">Status: <span class="font-bold">{{ commande.status }}</span></p>
                         </div>
                         <div>
-                        <select v-model="commande.status" @change="updateStatus(commande)" class="bg-gray-600 text-white rounded-md px-3 py-1 shadow focus:outline-none focus:ring-2 focus:ring-yellow-500">
-                            <option value="pending">En attente</option>
-                            <option value="in progress">En cours</option>
-                            <option value="completed">Terminée</option>
-                        </select>
+                            <select
+                                :value="commande._id === selectedCommande?._id ? tempStatus : commande.status"
+                                @change="handleStatusChange(commande, $event)"
+                                class="bg-gray-600 text-white rounded-md px-3 py-1 shadow focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                :disabled="commande.status === 'completed'"
+                            >
+                                <option value="pending">En attente</option>
+                                <option value="in progress">En cours</option>
+                                <option value="completed">Terminée</option>
+                            </select>
                         </div>
                     </div>
 
@@ -59,7 +64,7 @@
             </ul>
 
             <!-- Message si aucune commande dans l'onglet -->
-            <!-- <p v-else class="text-center text-gray-300">Aucune commande dans cette catégorie.</p> -->
+            <p v-else class="text-center text-gray-300">Aucune commande dans cette catégorie.</p>
 
             <!-- Popup de confirmation -->
             <div v-if="showPopup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
@@ -76,7 +81,7 @@
 </template>
 
 <script>
-import { useCommandesStore } from '../../httpRequest/stores/commande.js';
+import { useCommandesStore } from '@/httpRequest/stores/commande.js';
 import NavBarCuisine from "@/components/NavBar/NavbarCuisine.vue";
 import { computed, ref } from 'vue';
 import { onMounted } from 'vue';
@@ -87,6 +92,10 @@ export default {
   setup() {
     const commandesStore = useCommandesStore();
     const activeTab = ref("inProgress")
+    const previousStatus = ref();
+    const tempStatus = ref();
+    const selectedCommande = ref();
+    const showPopup = ref(false);
 
     onMounted(() => {
       commandesStore.fetchCommandes();
@@ -102,11 +111,37 @@ export default {
         );
     })
 
+    const handleStatusChange = (commande) => {
+        console.log(commande)
+        previousStatus.value = commande.status;
+        tempStatus.value = event.target.value;
+        selectedCommande.value = commande;
+        showPopup.value = true;
+    }
+
+    const confirmChange = () => {
+        selectedCommande.value.status = tempStatus.value
+          updateStatus(selectedCommande.value);
+        showPopup.value = false;
+    }
+    const cancelChange = () => {
+        selectedCommande.value.status = previousStatus;
+        showPopup.value = false;
+        selectedCommande.value = null;
+    }
+
     return {
-      commandesStore,
-      filteredCommandes,
-      updateStatus,
-      activeTab
+        commandesStore,
+        showPopup,
+        tempStatus,
+        selectedCommande,
+        filteredCommandes,
+        updateStatus,
+        activeTab,
+        previousStatus,
+        cancelChange,
+        confirmChange,
+        handleStatusChange,
     };
   },
 };
