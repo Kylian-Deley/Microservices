@@ -8,6 +8,7 @@ import TousMesPlats from "@/views/Cuisinier/TousMesPlats.vue";
 import Livraison from "@/views/Livreur/Livraison.vue";
 import CommandeLivrer from "@/views/Livreur/CommandeLivrer.vue";
 import UnauthorizedPage from '../views/UnauthorizedPage.vue';
+import {useAuthStore} from "../httpRequest/stores/auth.js"
 
 const routes = [
   {
@@ -75,7 +76,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if(to.meta ){
-    const userRole = JSON.parse(localStorage.getItem('clientInfo')!)?.role;
+    const authStore = useAuthStore()
+    // console.log(authStore)
+    const userRole = authStore.roles;
 
     if (to.meta.requiresRole && to.meta.requiresRole !== userRole) {
       return next({ path: '/permission_denied' });

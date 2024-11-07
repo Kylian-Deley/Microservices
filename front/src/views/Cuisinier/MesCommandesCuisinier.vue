@@ -29,24 +29,19 @@
             </div>
 
             <!-- Liste des commandes -->
-            <ul class="space-y-8" v-if="filteredCommandes.length">
+            <ul class="space-y-8">
                 <li v-for="commande in filteredCommandes" :key="commande._id" class="p-6 bg-gray-700 bg-opacity-90 rounded-lg shadow-md">
                     <div class="flex justify-between items-center">
                         <div>
-                            <h2 class="font-semibold text-xl text-yellow-400">Commande du {{ new Date(commande.date).toLocaleDateString() }}</h2>
-                            <p class="text-gray-300">Status: <span class="font-bold">{{ commande.status }}</span></p>
+                        <h2 class="font-semibold text-xl text-yellow-400">Commande du {{ new Date(commande.date).toLocaleDateString() }}</h2>
+                        <p class="text-gray-300">Status: <span class="font-bold">{{ commande.status }}</span></p>
                         </div>
                         <div>
-                            <select
-                                    :value="commande._id === selectedCommande?._id ? tempStatus : commande.status"
-                                    @change="handleStatusChange(commande, $event)"
-                                    class="bg-gray-600 text-white rounded-md px-3 py-1 shadow focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                                    :disabled="commande.status === 'completed'"
-                            >
-                                <option value="pending">En attente</option>
-                                <option value="in progress">En cours</option>
-                                <option value="completed">Terminée</option>
-                            </select>
+                        <select v-model="commande.status" @change="updateStatus(commande)" class="bg-gray-600 text-white rounded-md px-3 py-1 shadow focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                            <option value="pending">En attente</option>
+                            <option value="in progress">En cours</option>
+                            <option value="completed">Terminée</option>
+                        </select>
                         </div>
                     </div>
 
@@ -64,7 +59,7 @@
             </ul>
 
             <!-- Message si aucune commande dans l'onglet -->
-            <p v-else class="text-center text-gray-300">Aucune commande dans cette catégorie.</p>
+            <!-- <p v-else class="text-center text-gray-300">Aucune commande dans cette catégorie.</p> -->
 
             <!-- Popup de confirmation -->
             <div v-if="showPopup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
@@ -81,75 +76,39 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { useCommandesStore } from '../../httpRequest/stores/commande.js';
 import NavBarCuisine from "@/components/NavBar/NavbarCuisine.vue";
+import { computed, ref } from 'vue';
+import { onMounted } from 'vue';
 
 export default {
-    components: { NavBarCuisine },
-    data() {
-        return {
-            commandes: [],
-            activeTab: 'inProgress',
-            showPopup: false,
-            selectedCommande: null,
-            previousStatus: '',
-            tempStatus: ''
-        };
-    },
-    computed: {
-        filteredCommandes() {
-            return this.commandes.filter(commande =>
-                this.activeTab === 'inProgress' ? commande.status !== 'completed' : commande.status === 'completed'
-            );
-        }
-    },
-    async mounted() {
-        const clientInfo = JSON.parse(localStorage.getItem('clientInfo'));
-        try {
-            const response = await axios.get(`http://localhost:3000/api/commandes/chef/${clientInfo.id}`, {
-                headers: { 'user-id': clientInfo.id, 'role': clientInfo.role }
-            });
-            this.commandes = response.data;
-        } catch (error) {
-            console.error('Erreur lors de la récupération des commandes:', error);
-        }
-    },
-    methods: {
-        async updateStatus(commande) {
-            try {
-                await axios.patch(`http://localhost:3000/api/commandes/${commande._id}/status`,
-                    { status: this.tempStatus },
-                    {
-                        headers: {
-                            'user-id': JSON.parse(localStorage.getItem('clientInfo')).id,
-                            'role': JSON.parse(localStorage.getItem('clientInfo')).role
-                        }
-                    }
-                );
-                commande.status = this.tempStatus;
-            } catch (error) {
-                console.error('Erreur lors de la mise à jour du statut de la commande:', error);
-                commande.status = this.previousStatus;
-            } finally {
-                this.showPopup = false;
-                this.selectedCommande = null;
-            }
-        },
-        handleStatusChange(commande) {
-            this.previousStatus = commande.status;
-            this.tempStatus = event.target.value;
-            this.selectedCommande = commande;
-            this.showPopup = true;
-        },
-        confirmChange() {
-            this.updateStatus(this.selectedCommande);
-        },
-        cancelChange() {
-            this.selectedCommande.status = this.previousStatus;
-            this.showPopup = false;
-            this.selectedCommande = null;
-        }
-    }
+  components: { NavBarCuisine },
+
+  setup() {
+    const commandesStore = useCommandesStore();
+    const activeTab = ref("inProgress")
+
+    onMounted(() => {
+      commandesStore.fetchCommandes();
+    });
+
+    const updateStatus = (commande) => {
+      commandesStore.updateCommandeStatus(commande._id, commande.status);
+    };
+
+    const filteredCommandes = computed(() => {
+        return commandesStore.commandes.filter(commande =>
+            activeTab.value === 'inProgress' ? commande.status !== 'completed' : commande.status === 'completed'
+        );
+    })
+
+    return {
+      commandesStore,
+      filteredCommandes,
+      updateStatus,
+      activeTab
+    };
+  },
 };
 </script>
 
