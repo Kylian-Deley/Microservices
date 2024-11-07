@@ -13,7 +13,6 @@ axiosInstance.interceptors.request.use(
   (config) => {
     const authStore = useAuthStore()
     const userId = authStore.userId;
-    console.log(userId)
     if (userId) {
       config.headers['user-id'] = userId; 
     }

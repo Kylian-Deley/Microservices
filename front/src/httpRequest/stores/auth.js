@@ -21,8 +21,6 @@ export const useAuthStore = defineStore('auth', {
       try {
         const response = await httpModel.post('/login', credentials);
         // Récupérer et stocker le userId depuis la réponse
-        console.log(response.data.userInfo.id)
-        console.log(response.data.userInfo.roles)
         this.userId = response.data.userInfo.id;
         this.roles = response.data.userInfo.roles;
         this.isAuthenticated = true;
