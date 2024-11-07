@@ -50,7 +50,8 @@ router.get('/chef/:chefId', async (req, res) => {
         const platsDuChef = await Plat.find({ chefId: chefId }).select('_id');
         const platIdsDuChef = platsDuChef.map(plat => plat._id);
 
-        const commandes = await Commande.find({ "plats.platId": { $in: platIdsDuChef } });
+        const commandes = await Commande.find({ "plats.platId": { $in: platIdsDuChef } })
+            .sort({ date: -1 }); // Tri par date décroissante
 
         res.status(200).json(commandes);
     } catch (error) {
@@ -58,6 +59,7 @@ router.get('/chef/:chefId', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
 
 router.patch('/:commandeId/status', async (req, res) => {
     try {
