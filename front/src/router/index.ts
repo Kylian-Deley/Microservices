@@ -74,8 +74,8 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if(to.meta){
-    const userRole = JSON.parse(localStorage.getItem('clientInfo')!).role;
+  if(to.meta ){
+    const userRole = JSON.parse(localStorage.getItem('clientInfo')!)?.role;
 
     if (to.meta.requiresRole && to.meta.requiresRole !== userRole) {
       return next({ path: '/permission_denied' });
