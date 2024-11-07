@@ -8,7 +8,8 @@ app.use(cors());
 app.use(express.json());
 
 // Connexion à MongoDB
-mongoose.connect('mongodb+srv://bastien:Romeo2020@cluster0.87ozbqt.mongodb.net/Cluster0')
+const mongoUri = process.env.MONGO_URI || 'mongodb+srv://bastien:Romeo2020@cluster0.87ozbqt.mongodb.net/Cluster0';
+mongoose.connect(mongoUri)
     .then(() => console.log('MongoDB connecté pour la gateway'))
     .catch(err => console.error('Erreur de connexion MongoDB dans la gateway:', err));
 
@@ -26,7 +27,7 @@ app.use('/api/cuisine', cuisineRoutes);
 app.use('/api/livraison', livraisonRoutes);
 app.use('/api', authRoutes);
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Gateway running on port ${port}`);
 });

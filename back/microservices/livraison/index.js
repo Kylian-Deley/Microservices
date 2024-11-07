@@ -7,14 +7,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect('mongodb+srv://bastien:Romeo2020@cluster0.87ozbqt.mongodb.net/Cluster0')
+const mongoUri = process.env.MONGO_URI || 'mongodb+srv://bastien:Romeo2020@cluster0.87ozbqt.mongodb.net/Cluster0';
+mongoose.connect(mongoUri)
     .then(() => console.log('MongoDB connected for Livraison service'))
     .catch(err => console.error('MongoDB connection error:', err));
 
 const livraisonRoutes = require('./routes');
 app.use('/livraison', livraisonRoutes);
 
-const port = 3002;
+const port = process.env.PORT || 3002;
 app.listen(port, () => {
-    console.log(`Livraison service running on port ${port}`);
+    console.log(`Gateway running on port ${port}`);
 });
