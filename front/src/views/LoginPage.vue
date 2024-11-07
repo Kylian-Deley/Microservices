@@ -11,6 +11,9 @@ export default {
   components: {
     Login,
   },
+    setup(){
+      localStorage.removeItem('clientInfo')
+    }
 };
 </script>
 
