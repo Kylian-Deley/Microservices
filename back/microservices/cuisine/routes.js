@@ -66,4 +66,90 @@ router.get('/menus-public', async (req, res) => {
     }
 });
 
+// Mise à jour d'un menu
+router.put('/menus/:id', async (req, res) => {
+    const { id } = req.params;
+    const chefId = req.headers['user-id'];
+    const { name } = req.body;
+
+    if (!chefId) return res.status(403).json({ message: "ID du cuisinier non fourni" });
+
+    try {
+        const menu = await Menu.findOneAndUpdate(
+            { _id: id, chefId },
+            { name },
+            { new: true }
+        );
+        if (!menu) {
+            return res.status(404).json({ message: "Menu non trouvé ou non autorisé" });
+        }
+        res.status(200).json(menu);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Suppression d'un menu
+router.delete('/menus/:id', async (req, res) => {
+    const { id } = req.params;
+    const chefId = req.headers['user-id'];
+
+    if (!chefId) return res.status(403).json({ message: "ID du cuisinier non fourni" });
+
+    try {
+        const menu = await Menu.findOneAndDelete({ _id: id, chefId });
+        if (!menu) {
+            return res.status(404).json({ message: "Menu non trouvé ou non autorisé" });
+        }
+        res.status(200).json({ message: "Menu supprimé avec succès" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Mise à jour d'un plat
+router.put('/plats/:id', async (req, res) => {
+    const { id } = req.params;
+    const chefId = req.headers['user-id'];
+    const { name, description, price } = req.body;
+
+    if (!chefId) return res.status(403).json({ message: "ID du cuisinier non fourni" });
+
+    try {
+        const plat = await Plat.findOneAndUpdate(
+            { _id: id, chefId },
+            { name, description, price },
+            { new: true }
+        );
+        if (!plat) {
+            return res.status(404).json({ message: "Plat non trouvé ou non autorisé" });
+        }
+        res.status(200).json(plat);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Suppression d'un plat
+router.delete('/plats/:id', async (req, res) => {
+    const { id } = req.params;
+    const chefId = req.headers['user-id'];
+
+    if (!chefId) return res.status(403).json({ message: "ID du cuisinier non fourni" });
+
+    try {
+        const plat = await Plat.findOneAndDelete({ _id: id, chefId });
+        if (!plat) {
+            return res.status(404).json({ message: "Plat non trouvé ou non autorisé" });
+        }
+
+        // Retirer le plat du menu associé
+        await Menu.findByIdAndUpdate(plat.menuId, { $pull: { plats: plat._id } });
+
+        res.status(200).json({ message: "Plat supprimé avec succès" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 module.exports = router;
