@@ -20,7 +20,7 @@ roles: "livreur"
 name: "Livreur"
 
 
-Comment lancer l'application ?
+# Comment lancer l'application ?
 
 Faire un npm install sur le dossier back, le front et la racine du projet
 
